@@ -16,7 +16,7 @@ export function SettleButton({
 }) {
   return (
     <ConfirmButton
-      onConfirm={() => recordSettlement(groupId, fromUserId, toUserId, amount)}
+      onConfirm={async () => { await recordSettlement(groupId, fromUserId, toUserId, amount); }}
       label="Settle"
       confirmLabel="Yes, record"
       confirmMessage={`Record $${amount.toFixed(2)} payment?`}

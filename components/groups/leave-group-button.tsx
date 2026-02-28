@@ -6,7 +6,7 @@ import { ConfirmButton } from "@/components/ui/confirm-button";
 export function LeaveGroupButton({ groupId }: { groupId: string }) {
   return (
     <ConfirmButton
-      onConfirm={() => leaveGroup(groupId)}
+      onConfirm={async () => { await leaveGroup(groupId); }}
       label="Leave Group"
       confirmLabel="Yes, leave"
       confirmMessage="Leave this group?"

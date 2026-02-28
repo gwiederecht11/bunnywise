@@ -1,8 +1,12 @@
 {
+  "engines": {
+    "node": "22.21.1"
+  },
   "name": "bunnywise",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "node -v && npm -v",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

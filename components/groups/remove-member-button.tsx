@@ -12,7 +12,7 @@ export function RemoveMemberButton({
 }) {
   return (
     <ConfirmButton
-      onConfirm={() => removeMember(groupId, userId)}
+      onConfirm={async () => { await removeMember(groupId, userId); }}
       label="Remove"
       confirmLabel="Yes, remove"
       confirmMessage="Remove this member?"

@@ -12,7 +12,7 @@ export function DeleteExpenseButton({
 }) {
   return (
     <ConfirmButton
-      onConfirm={() => deleteExpense(expenseId, groupId)}
+      onConfirm={async () => { await deleteExpense(expenseId, groupId); }}
       label="Delete"
       confirmLabel="Yes, delete"
       confirmMessage="Delete this expense?"
