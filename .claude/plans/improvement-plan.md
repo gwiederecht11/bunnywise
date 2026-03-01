@@ -64,11 +64,6 @@ Group cards only show name/description, not the user's balance in each group.
 
 - **Modify**: `app/(app)/dashboard/page.tsx` — compute per-group net balance using `computeNetBalances`/`getUserSummary`, display on each group card (e.g., "+$50.00" green or "-$25.00" red)
 
-### 3.2 Recent Activity Feed
-Dashboard only shows groups, no recent expenses.
-
-- **Modify**: `app/(app)/dashboard/page.tsx` — add "Recent Activity" section showing latest 10 expenses across all groups with expense description, group name, amount, and date
-
 ---
 
 ## Phase 4: Code Quality
@@ -92,5 +87,5 @@ Color-only indicators for balances (red/green) are not colorblind-friendly.
 After each phase:
 1. **Phase 1**: Verify active tab highlights on group pages, add member shows feedback above form, delete confirmations are inline everywhere
 2. **Phase 2**: Edit an expense and verify splits update correctly. Record a settlement and verify balances zero out. Leave a group and verify redirect. Edit profile name and verify it shows in navbar
-3. **Phase 3**: Verify per-group balances show on dashboard cards. Verify recent activity lists expenses from multiple groups
+3. **Phase 3**: Verify per-group balances show on dashboard cards
 4. **Phase 4**: Run `npx tsc --noEmit` — no type assertion warnings. Check with browser accessibility tools

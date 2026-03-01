@@ -10,17 +10,9 @@ export function Navbar({ email }: { email: string }) {
   return (
     <nav className="border-b border-foreground/10 bg-background">
       <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
-        <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="text-lg font-bold">
-            Bunnywise
-          </Link>
-          <Link
-            href="/groups/new"
-            className="hidden text-sm text-foreground/60 transition hover:text-foreground sm:block"
-          >
-            New Group
-          </Link>
-        </div>
+        <Link href="/dashboard" className="text-lg font-bold">
+          Bunnywise
+        </Link>
 
         {/* Desktop */}
         <div className="hidden items-center gap-4 sm:flex">
@@ -82,13 +74,6 @@ export function Navbar({ email }: { email: string }) {
             {email}
           </Link>
           <div className="flex flex-col gap-2">
-            <Link
-              href="/groups/new"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm text-foreground/60 transition hover:text-foreground"
-            >
-              New Group
-            </Link>
             <form action={signOut}>
               <button
                 type="submit"

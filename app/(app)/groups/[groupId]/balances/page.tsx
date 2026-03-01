@@ -5,6 +5,7 @@ import {
   simplifyDebts,
 } from "@/lib/utils/calculations";
 import { SettleButton } from "@/components/balances/settle-button";
+import type { GroupMemberWithProfile } from "@/lib/types/database";
 
 export default async function GroupBalancesPage({
   params,
@@ -26,12 +27,8 @@ export default async function GroupBalancesPage({
     .eq("group_id", groupId);
 
   const memberMap = new Map<string, string>();
-  memberships?.forEach((m) => {
-    const profile = m.profiles as unknown as {
-      id: string;
-      email: string;
-      full_name: string;
-    };
+  (memberships as GroupMemberWithProfile[] | null)?.forEach((m) => {
+    const profile = m.profiles;
     memberMap.set(
       m.user_id,
       profile?.full_name || profile?.email || "Unknown",
@@ -87,6 +84,7 @@ export default async function GroupBalancesPage({
                   className={`text-sm font-medium ${
                     balance.amount > 0 ? "text-green-600" : "text-red-600"
                   }`}
+                  aria-label={`${balance.amount > 0 ? "Is owed" : "Owes"} $${Math.abs(balance.amount).toFixed(2)}`}
                 >
                   {balance.amount > 0 ? "+" : "-"}$
                   {Math.abs(balance.amount).toFixed(2)}

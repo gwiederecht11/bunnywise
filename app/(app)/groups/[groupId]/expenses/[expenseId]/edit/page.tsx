@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ExpenseForm } from "@/components/expenses/expense-form";
 import type { ExpenseInitialData } from "@/components/expenses/expense-form";
+import type { GroupMemberWithProfile } from "@/lib/types/database";
 
 export default async function EditExpensePage({
   params,
@@ -47,18 +48,11 @@ export default async function EditExpensePage({
     .eq("group_id", groupId);
 
   const members =
-    memberships?.map((m) => {
-      const profile = m.profiles as unknown as {
-        id: string;
-        email: string;
-        full_name: string;
-      };
-      return {
-        user_id: m.user_id,
-        full_name: profile?.full_name ?? "",
-        email: profile?.email ?? "",
-      };
-    }) ?? [];
+    (memberships as GroupMemberWithProfile[] | null)?.map((m) => ({
+      user_id: m.user_id,
+      full_name: m.profiles?.full_name ?? "",
+      email: m.profiles?.email ?? "",
+    })) ?? [];
 
   const initialData: ExpenseInitialData = {
     id: expense.id,

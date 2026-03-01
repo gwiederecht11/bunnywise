@@ -41,6 +41,7 @@ export function AddMemberForm({ groupId }: { groupId: string }) {
           type="email"
           required
           placeholder="Enter email address"
+          aria-label="Member email address"
           className="flex-1 rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
         />
         <button

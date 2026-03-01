@@ -4,6 +4,7 @@ import { AddMemberForm } from "@/components/groups/add-member-form";
 import { DeleteGroupButton } from "@/components/groups/delete-group-button";
 import { RemoveMemberButton } from "@/components/groups/remove-member-button";
 import { LeaveGroupButton } from "@/components/groups/leave-group-button";
+import type { GroupMemberWithProfile } from "@/lib/types/database";
 
 export default async function GroupSettingsPage({
   params,
@@ -39,12 +40,8 @@ export default async function GroupSettingsPage({
       <div>
         <h2 className="mb-4 text-lg font-semibold">Members</h2>
         <div className="mb-4 space-y-2">
-          {members?.map((member) => {
-            const profile = member.profiles as unknown as {
-              id: string;
-              email: string;
-              full_name: string;
-            };
+          {(members as GroupMemberWithProfile[] | null)?.map((member) => {
+            const profile = member.profiles;
             const isSelf = member.user_id === user!.id;
 
             return (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ExpenseList } from "@/components/expenses/expense-list";
 import type { ExpenseItem } from "@/components/expenses/expense-list";
 import { computeNetBalances, simplifyDebts } from "@/lib/utils/calculations";
+import type { ExpenseWithPayer } from "@/lib/types/database";
 
 export default async function GroupActivityPage({
   params,
@@ -49,11 +50,8 @@ export default async function GroupActivityPage({
   const allSettled = settlements.length === 0 && (expenses ?? []).length > 0;
 
   // Prepare serializable expense items
-  const expenseItems: ExpenseItem[] = (expenses ?? []).map((expense) => {
-    const payer = expense.profiles as unknown as {
-      full_name: string;
-      email: string;
-    };
+  const expenseItems: ExpenseItem[] = ((expenses ?? []) as unknown as ExpenseWithPayer[]).map((expense) => {
+    const payer = expense.profiles;
     return {
       id: expense.id,
       description: expense.description,

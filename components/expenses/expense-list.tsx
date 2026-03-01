@@ -40,13 +40,20 @@ export function ExpenseList({
         </div>
       )}
 
-      {(!allSettled || showHistory) && (
-        <div>
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+        style={{ gridTemplateRows: !allSettled || showHistory ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
           {expenses.map((expense) => {
             const date = new Date(expense.expense_date);
-            const month = date.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+            const month = date
+              .toLocaleDateString("en-US", { month: "short" })
+              .toUpperCase();
             const day = date.getDate();
-            const payerLabel = expense.isPayer ? "you paid" : `${expense.payerName} paid`;
+            const payerLabel = expense.isPayer
+              ? "You paid"
+              : `${expense.payerName} paid`;
 
             let oweLabel: string;
             let oweAmount: string | null;
@@ -72,7 +79,9 @@ export function ExpenseList({
               >
                 {/* Date block */}
                 <div className="shrink-0 w-12 text-center">
-                  <p className="text-xs uppercase text-foreground/40">{month}</p>
+                  <p className="text-xs uppercase text-foreground/40">
+                    {month}
+                  </p>
                   <p className="text-xl font-bold">{day}</p>
                 </div>
 
@@ -97,24 +106,28 @@ export function ExpenseList({
                   </div>
                 </div>
 
-                {/* Edit/Delete — fixed-width slot so rows stay aligned */}
-                <div className="shrink-0 w-20 flex items-center justify-end gap-3">
-                  <Link
-                    href={`/groups/${groupId}/expenses/${expense.id}/edit`}
-                    className="text-xs text-foreground/60 transition hover:text-foreground"
-                  >
-                    Edit
-                  </Link>
-                  <DeleteExpenseButton
-                    expenseId={expense.id}
-                    groupId={groupId}
-                  />
+                {/* Edit/Delete — fixed-width columns so buttons align across rows */}
+                <div className="shrink-0 flex items-center">
+                  <div className="w-10 text-center">
+                    <Link
+                      href={`/groups/${groupId}/expenses/${expense.id}/edit`}
+                      className="text-sm text-foreground/60 transition hover:text-foreground"
+                    >
+                      Edit
+                    </Link>
+                  </div>
+                  <div className="w-14 text-center">
+                    <DeleteExpenseButton
+                      expenseId={expense.id}
+                      groupId={groupId}
+                    />
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
-      )}
+      </div>
     </div>
   );
 }
