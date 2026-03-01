@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "name": "bunnywise",
   "version": "0.1.0",
