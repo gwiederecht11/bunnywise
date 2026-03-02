@@ -8,6 +8,7 @@ import { signUp } from "@/lib/actions/auth";
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -16,7 +17,24 @@ export default function SignupPage() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
+    } else if (result?.success) {
+      setEmailSent(true);
+      setLoading(false);
     }
+  }
+
+  if (emailSent) {
+    return (
+      <div className="text-center">
+        <h1 className="mb-2 text-3xl font-bold">Check your email</h1>
+        <p className="mb-6 text-sm text-foreground/60">
+          We sent you a confirmation link. Click it to verify your email and sign in.
+        </p>
+        <Link href="/login" className="text-sm font-medium underline">
+          Back to sign in
+        </Link>
+      </div>
+    );
   }
 
   return (

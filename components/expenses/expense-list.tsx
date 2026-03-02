@@ -112,23 +112,19 @@ export function ExpenseList({
                 </div>
 
                 {/* Edit/Delete */}
-                <div className="shrink-0 flex items-center">
-                  <div className="w-10 text-center">
-                    <Button
-                      as={Link}
-                      href={`/groups/${groupId}/expenses/${expense.id}/edit`}
-                      variant="light"
-                      size="sm"
-                    >
-                      Edit
-                    </Button>
-                  </div>
-                  <div className="w-14 text-center">
-                    <DeleteExpenseButton
-                      expenseId={expense.id}
-                      groupId={groupId}
-                    />
-                  </div>
+                <div className="shrink-0 flex items-center gap-1">
+                  <Button
+                    as={Link}
+                    href={`/groups/${groupId}/expenses/${expense.id}/edit`}
+                    variant="light"
+                    size="sm"
+                  >
+                    Edit
+                  </Button>
+                  <DeleteExpenseButton
+                    expenseId={expense.id}
+                    groupId={groupId}
+                  />
                 </div>
               </div>
             );

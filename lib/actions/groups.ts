@@ -35,7 +35,8 @@ export async function createGroup(formData: FormData) {
     .from("group_members")
     .insert({ group_id: group.id, user_id: user.id });
 
-  redirect(`/groups/${group.id}`);
+  revalidatePath("/dashboard");
+  redirect("/dashboard");
 }
 
 export async function addMember(groupId: string, formData: FormData) {

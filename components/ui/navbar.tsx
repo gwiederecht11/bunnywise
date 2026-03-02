@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   Navbar as HeroNavbar,
@@ -27,8 +28,14 @@ export function Navbar({ email }: { email: string }) {
       <NavbarContent>
         <NavbarMenuToggle className="sm:hidden" />
         <NavbarBrand>
-          <Link href="/dashboard" className="text-lg font-bold">
+          <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold">
             Bunnywise
+            <Image
+              src="/bunny-logo.png"
+              alt="Bunnywise logo"
+              width={28}
+              height={28}
+            />
           </Link>
         </NavbarBrand>
       </NavbarContent>

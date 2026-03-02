@@ -1,11 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import Link from "next/link";
-import { Button } from "@/components/ui/heroui";
-import { ExpenseList } from "@/components/expenses/expense-list";
+import { GroupActivityClient } from "@/components/expenses/group-activity-client";
 import type { ExpenseItem } from "@/components/expenses/expense-list";
 import { computeNetBalances, simplifyDebts } from "@/lib/utils/calculations";
-import type { ExpenseWithPayer } from "@/lib/types/database";
+import type { ExpenseWithPayer, GroupMemberWithProfile } from "@/lib/types/database";
 
 export default async function GroupActivityPage({
   params,
@@ -19,6 +17,19 @@ export default async function GroupActivityPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Fetch group members with profile info (needed for inline expense form)
+  const { data: memberships } = await supabase
+    .from("group_members")
+    .select("user_id, profiles(id, email, full_name)")
+    .eq("group_id", groupId);
+
+  const members =
+    (memberships as GroupMemberWithProfile[] | null)?.map((m) => ({
+      user_id: m.user_id,
+      full_name: m.profiles?.full_name ?? "",
+      email: m.profiles?.email ?? "",
+    })) ?? [];
 
   // Fetch expenses with payer info
   const { data: expenses } = await supabase
@@ -66,33 +77,12 @@ export default async function GroupActivityPage({
   });
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Expenses</h2>
-        <Link href={`/groups/${groupId}/expenses/new`}>
-          <Button color="primary">
-            Add Expense
-          </Button>
-        </Link>
-      </div>
-
-      {!expenses || expenses.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-foreground/20 p-8 text-center">
-          <p className="mb-2 text-foreground/60">No expenses yet.</p>
-          <Link
-            href={`/groups/${groupId}/expenses/new`}
-            className="text-sm font-medium underline"
-          >
-            Add the first expense
-          </Link>
-        </div>
-      ) : (
-        <ExpenseList
-          expenses={expenseItems}
-          groupId={groupId}
-          allSettled={allSettled}
-        />
-      )}
-    </div>
+    <GroupActivityClient
+      groupId={groupId}
+      currentUserId={user!.id}
+      members={members}
+      expenses={expenseItems}
+      allSettled={allSettled}
+    />
   );
 }

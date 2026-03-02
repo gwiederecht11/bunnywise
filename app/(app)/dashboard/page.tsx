@@ -1,13 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { Button, Card, CardBody } from "@/components/ui/heroui";
+import { Card, CardBody } from "@/components/ui/heroui";
 import {
   computeNetBalances,
   getUserSummary,
   simplifyDebts,
 } from "@/lib/utils/calculations";
 import type { GroupMemberWithGroup } from "@/lib/types/database";
+import { NewGroupModal } from "@/components/groups/new-group-modal";
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -96,11 +97,7 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <Link href="/groups/new">
-          <Button color="primary">
-            New Group
-          </Button>
-        </Link>
+        <NewGroupModal />
       </div>
 
       {/* Balance summary */}
