@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { Button } from "@/components/ui/heroui";
 import { ExpenseList } from "@/components/expenses/expense-list";
 import type { ExpenseItem } from "@/components/expenses/expense-list";
 import { computeNetBalances, simplifyDebts } from "@/lib/utils/calculations";
@@ -68,11 +69,10 @@ export default async function GroupActivityPage({
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Expenses</h2>
-        <Link
-          href={`/groups/${groupId}/expenses/new`}
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90"
-        >
-          Add Expense
+        <Link href={`/groups/${groupId}/expenses/new`}>
+          <Button color="primary">
+            Add Expense
+          </Button>
         </Link>
       </div>
 

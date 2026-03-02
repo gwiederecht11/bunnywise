@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/heroui";
 
 export default function GroupNotFound() {
   return (
@@ -7,11 +8,10 @@ export default function GroupNotFound() {
       <p className="mb-6 text-sm text-foreground/60">
         This group doesn&apos;t exist or you don&apos;t have access to it.
       </p>
-      <Link
-        href="/dashboard"
-        className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90"
-      >
-        Back to Dashboard
+      <Link href="/dashboard">
+        <Button color="primary">
+          Back to Dashboard
+        </Button>
       </Link>
     </div>
   );

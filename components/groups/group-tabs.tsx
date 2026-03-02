@@ -1,39 +1,38 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Tabs, Tab } from "@heroui/react";
+import { usePathname, useRouter } from "next/navigation";
 
 export function GroupTabs({ groupId }: { groupId: string }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const tabs = [
-    { label: "Activity", href: `/groups/${groupId}` },
-    { label: "Balances", href: `/groups/${groupId}/balances` },
-    { label: "Settings", href: `/groups/${groupId}/settings` },
+    { key: "activity", label: "Activity", href: `/groups/${groupId}` },
+    { key: "balances", label: "Balances", href: `/groups/${groupId}/balances` },
+    { key: "settings", label: "Settings", href: `/groups/${groupId}/settings` },
   ];
 
-  return (
-    <div className="mb-6 flex gap-1 border-b border-foreground/10">
-      {tabs.map((tab) => {
-        const isActive =
-          tab.href === `/groups/${groupId}`
-            ? pathname === tab.href
-            : pathname.startsWith(tab.href);
+  const selectedKey = tabs.find((tab) =>
+    tab.key === "activity"
+      ? pathname === tab.href
+      : pathname.startsWith(tab.href),
+  )?.key ?? "activity";
 
-        return (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            className={`border-b-2 px-4 py-2 text-sm font-medium transition hover:text-foreground ${
-              isActive
-                ? "border-foreground text-foreground"
-                : "border-transparent text-foreground/60"
-            }`}
-          >
-            {tab.label}
-          </Link>
-        );
-      })}
+  return (
+    <div className="mb-6">
+      <Tabs
+        selectedKey={selectedKey}
+        onSelectionChange={(key) => {
+          const tab = tabs.find((t) => t.key === key);
+          if (tab) router.push(tab.href);
+        }}
+        variant="underlined"
+      >
+        {tabs.map((tab) => (
+          <Tab key={tab.key} title={tab.label} />
+        ))}
+      </Tabs>
     </div>
   );
 }

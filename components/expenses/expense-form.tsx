@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Input, Button, Checkbox, Select, SelectItem } from "@heroui/react";
 import { createExpense, updateExpense } from "@/lib/actions/expenses";
 
 type Member = {
@@ -14,6 +15,7 @@ export type ExpenseInitialData = {
   description: string;
   amount: number;
   paidBy: string;
+  expenseDate: string;
   splits: { userId: string; amount: number }[];
 };
 
@@ -68,7 +70,7 @@ export function ExpenseForm({
   const payerLabel =
     paidBy === currentUserId
       ? "You are"
-      : `${getMemberDisplayName(payer!)} is`;
+      : payer ? `${getMemberDisplayName(payer)} is` : "They are";
 
   // Calculate splits based on current mode
   const splits = useMemo(() => {
@@ -151,65 +153,59 @@ export function ExpenseForm({
       )}
 
       {/* Description */}
-      <div>
-        <label htmlFor="description" className="mb-1 block text-sm font-medium">
-          Description
-        </label>
-        <input
-          id="description"
-          name="description"
-          type="text"
-          required
-          defaultValue={initialData?.description}
-          className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-          placeholder="e.g. Dinner, Groceries, Uber"
-        />
-      </div>
+      <Input
+        name="description"
+        type="text"
+        label="Description"
+        placeholder="e.g. Dinner, Groceries, Uber"
+        variant="bordered"
+        isRequired
+        defaultValue={initialData?.description}
+      />
 
       {/* Amount */}
-      <div>
-        <label htmlFor="amount" className="mb-1 block text-sm font-medium">
-          Amount ($)
-        </label>
-        <input
-          id="amount"
-          name="amount"
-          type="number"
-          step="0.01"
-          min="0.01"
-          required
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-          placeholder="0.00"
-        />
-      </div>
+      <Input
+        name="amount"
+        type="number"
+        label="Amount ($)"
+        placeholder="0.00"
+        variant="bordered"
+        isRequired
+        step={0.01}
+        min={0.01}
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
+
+      {/* Date */}
+      <Input
+        name="expenseDate"
+        type="date"
+        label="Date"
+        variant="bordered"
+        isRequired
+        defaultValue={initialData?.expenseDate ?? new Date().toISOString().split("T")[0]}
+      />
 
       {/* Paid by */}
-      <div>
-        <label htmlFor="paidBy" className="mb-1 block text-sm font-medium">
-          Paid by
-        </label>
-        <select
-          id="paidBy"
-          name="paidBy"
-          value={paidBy}
-          onChange={(e) => {
-            setPaidBy(e.target.value);
-            if (splitMode === "full" || splitMode === "equal") {
-              // Reset to keep UI consistent
-            }
-          }}
-          className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-        >
-          {members.map((member) => (
-            <option key={member.user_id} value={member.user_id}>
-              {getMemberDisplayName(member)}
-              {member.user_id === currentUserId ? " (you)" : ""}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        name="paidBy"
+        label="Paid by"
+        variant="bordered"
+        disallowEmptySelection
+        selectedKeys={new Set([paidBy])}
+        onSelectionChange={(keys) => {
+          const selected = Array.from(keys as Set<string>)[0];
+          if (selected) setPaidBy(selected);
+        }}
+      >
+        {members.map((member) => (
+          <SelectItem key={member.user_id} textValue={`${getMemberDisplayName(member)}${member.user_id === currentUserId ? " (you)" : ""}`}>
+            {getMemberDisplayName(member)}
+            {member.user_id === currentUserId ? " (you)" : ""}
+          </SelectItem>
+        ))}
+      </Select>
 
       {/* Split options */}
       <div>
@@ -277,32 +273,33 @@ export function ExpenseForm({
 
         {/* More options toggle */}
         {!showMoreOptions ? (
-          <button
-            type="button"
-            onClick={() => {
+          <Button
+            variant="light"
+            size="sm"
+            className="mt-3"
+            onPress={() => {
               setShowMoreOptions(true);
               setSplitMode("custom");
               setCustomSplitType("equal");
               setSelectedMembers(members.map((m) => m.user_id));
             }}
-            className="mt-3 text-sm font-medium text-foreground/60 transition hover:text-foreground"
           >
             More options...
-          </button>
+          </Button>
         ) : (
           <div className="mt-4 rounded-lg border border-foreground/10 p-4">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm font-medium">Custom split</p>
-              <button
-                type="button"
-                onClick={() => {
+              <Button
+                variant="light"
+                size="sm"
+                onPress={() => {
                   setShowMoreOptions(false);
                   setSplitMode("equal");
                 }}
-                className="text-xs text-foreground/40 hover:text-foreground"
               >
                 Close
-              </button>
+              </Button>
             </div>
 
             {/* Custom split type tabs */}
@@ -344,11 +341,10 @@ export function ExpenseForm({
                         : "border-foreground/5 opacity-50"
                     }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleMember(member.user_id)}
-                      className="h-4 w-4"
+                    <Checkbox
+                      isSelected={isSelected}
+                      onValueChange={() => toggleMember(member.user_id)}
+                      size="sm"
                     />
                     <span className="flex-1 text-sm">
                       {getMemberName(member, currentUserId)}
@@ -457,15 +453,17 @@ export function ExpenseForm({
         )}
       </div>
 
-      <button
+      <Button
         type="submit"
-        disabled={loading || !isValid}
-        className="w-full rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+        color="primary"
+        isLoading={loading}
+        isDisabled={!isValid}
+        fullWidth
       >
         {loading
           ? initialData ? "Saving..." : "Adding..."
           : initialData ? "Save Changes" : "Add Expense"}
-      </button>
+      </Button>
     </form>
   );
 }

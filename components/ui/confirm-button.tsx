@@ -1,6 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@heroui/react";
 
 export function ConfirmButton({
   onConfirm,
@@ -15,45 +24,57 @@ export function ConfirmButton({
   confirmMessage?: string;
   variant?: "inline" | "danger";
 }) {
-  const [confirming, setConfirming] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [loading, setLoading] = useState(false);
 
-  async function handleConfirm() {
+  async function handleConfirm(onClose: () => void) {
     setLoading(true);
     await onConfirm();
     setLoading(false);
-    setConfirming(false);
-  }
-
-  if (!confirming) {
-    const className =
-      variant === "danger"
-        ? "rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-        : "text-sm text-red-600 transition hover:text-red-800";
-
-    return (
-      <button onClick={() => setConfirming(true)} className={className}>
-        {label}
-      </button>
-    );
+    onClose();
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-red-600">{confirmMessage}</span>
-      <button
-        onClick={handleConfirm}
-        disabled={loading}
-        className="rounded-md bg-red-600 px-3 py-1 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
-      >
-        {loading ? "..." : confirmLabel}
-      </button>
-      <button
-        onClick={() => setConfirming(false)}
-        className="rounded-md border border-foreground/20 px-3 py-1 text-sm font-medium transition hover:bg-foreground/5"
-      >
-        Cancel
-      </button>
-    </div>
+    <>
+      {variant === "danger" ? (
+        <Button color="danger" onPress={onOpen}>
+          {label}
+        </Button>
+      ) : (
+        <Button
+          variant="light"
+          size="sm"
+          color="danger"
+          onPress={onOpen}
+        >
+          {label}
+        </Button>
+      )}
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Confirm</ModalHeader>
+              <ModalBody>
+                <p>{confirmMessage}</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  isLoading={loading}
+                  onPress={() => handleConfirm(onClose)}
+                >
+                  {confirmLabel}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

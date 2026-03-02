@@ -28,6 +28,7 @@ export async function createExpense(
   const description = formData.get("description") as string;
   const amount = parseFloat(formData.get("amount") as string);
   const paidBy = formData.get("paidBy") as string;
+  const expenseDate = formData.get("expenseDate") as string;
   const splitsJson = formData.get("splits") as string;
 
   if (!description || isNaN(amount) || amount <= 0) {
@@ -59,6 +60,7 @@ export async function createExpense(
       description,
       amount,
       paid_by: paidBy,
+      expense_date: expenseDate || new Date().toISOString().split("T")[0],
     })
     .select("id")
     .single();
@@ -105,6 +107,7 @@ export async function updateExpense(
   const description = formData.get("description") as string;
   const amount = parseFloat(formData.get("amount") as string);
   const paidBy = formData.get("paidBy") as string;
+  const expenseDate = formData.get("expenseDate") as string;
   const splitsJson = formData.get("splits") as string;
 
   if (!description || isNaN(amount) || amount <= 0) {
@@ -134,6 +137,7 @@ export async function updateExpense(
       description,
       amount,
       paid_by: paidBy,
+      expense_date: expenseDate || new Date().toISOString().split("T")[0],
     })
     .eq("id", expenseId);
 

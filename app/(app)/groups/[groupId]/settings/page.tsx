@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
+import { Card, CardBody } from "@/components/ui/heroui";
 import { AddMemberForm } from "@/components/groups/add-member-form";
 import { DeleteGroupButton } from "@/components/groups/delete-group-button";
 import { RemoveMemberButton } from "@/components/groups/remove-member-button";
@@ -45,30 +46,29 @@ export default async function GroupSettingsPage({
             const isSelf = member.user_id === user!.id;
 
             return (
-              <div
-                key={member.user_id}
-                className="flex items-center justify-between rounded-lg border border-foreground/10 p-3"
-              >
-                <div>
-                  <p className="text-sm font-medium">
-                    {profile?.full_name || profile?.email}
-                    {isSelf && (
-                      <span className="ml-2 text-foreground/40">(you)</span>
-                    )}
-                  </p>
-                  {profile?.full_name && (
-                    <p className="text-xs text-foreground/40">
-                      {profile.email}
+              <Card key={member.user_id}>
+                <CardBody className="flex-row items-center justify-between py-3">
+                  <div>
+                    <p className="text-sm font-medium">
+                      {profile?.full_name || profile?.email}
+                      {isSelf && (
+                        <span className="ml-2 text-foreground/40">(you)</span>
+                      )}
                     </p>
+                    {profile?.full_name && (
+                      <p className="text-xs text-foreground/40">
+                        {profile.email}
+                      </p>
+                    )}
+                  </div>
+                  {isCreator && !isSelf && (
+                    <RemoveMemberButton
+                      groupId={groupId}
+                      userId={member.user_id}
+                    />
                   )}
-                </div>
-                {isCreator && !isSelf && (
-                  <RemoveMemberButton
-                    groupId={groupId}
-                    userId={member.user_id}
-                  />
-                )}
-              </div>
+                </CardBody>
+              </Card>
             );
           })}
         </div>
@@ -84,21 +84,25 @@ export default async function GroupSettingsPage({
         </h2>
         <div className="space-y-4">
           {!isCreator && (
-            <div className="rounded-lg border border-red-200 p-4">
-              <p className="mb-3 text-sm text-foreground/60">
-                Leave this group. You can be re-added by the group creator.
-              </p>
-              <LeaveGroupButton groupId={groupId} />
-            </div>
+            <Card className="border border-red-200">
+              <CardBody>
+                <p className="mb-3 text-sm text-foreground/60">
+                  Leave this group. You can be re-added by the group creator.
+                </p>
+                <LeaveGroupButton groupId={groupId} />
+              </CardBody>
+            </Card>
           )}
           {isCreator && (
-            <div className="rounded-lg border border-red-200 p-4">
-              <p className="mb-3 text-sm text-foreground/60">
-                Permanently delete this group and all its expenses. This action
-                cannot be undone.
-              </p>
-              <DeleteGroupButton groupId={groupId} />
-            </div>
+            <Card className="border border-red-200">
+              <CardBody>
+                <p className="mb-3 text-sm text-foreground/60">
+                  Permanently delete this group and all its expenses. This action
+                  cannot be undone.
+                </p>
+                <DeleteGroupButton groupId={groupId} />
+              </CardBody>
+            </Card>
           )}
         </div>
       </div>

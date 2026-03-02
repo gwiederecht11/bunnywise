@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/heroui";
 
 export default function LandingPage() {
   return (
@@ -23,17 +24,15 @@ export default function LandingPage() {
             settle up with simplified payments.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/signup"
-              className="rounded-md bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:opacity-90"
-            >
-              Get started
+            <Link href="/signup">
+              <Button color="primary" size="lg">
+                Get started
+              </Button>
             </Link>
-            <Link
-              href="/login"
-              className="rounded-md border border-foreground/20 px-6 py-3 text-sm font-medium transition hover:bg-foreground/5"
-            >
-              Sign in
+            <Link href="/login">
+              <Button variant="bordered" size="lg">
+                Sign in
+              </Button>
             </Link>
           </div>
         </div>

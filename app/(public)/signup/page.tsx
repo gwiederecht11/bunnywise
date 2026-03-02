@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Input, Button } from "@heroui/react";
 import { signUp } from "@/lib/actions/auth";
 
 export default function SignupPage() {
@@ -32,56 +33,42 @@ export default function SignupPage() {
           </div>
         )}
 
-        <div>
-          <label htmlFor="fullName" className="mb-1 block text-sm font-medium">
-            Full name
-          </label>
-          <input
-            id="fullName"
-            name="fullName"
-            type="text"
-            required
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="Jane Doe"
-          />
-        </div>
+        <Input
+          name="fullName"
+          type="text"
+          label="Full name"
+          placeholder="Jane Doe"
+          variant="bordered"
+          isRequired
+        />
 
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="you@example.com"
-          />
-        </div>
+        <Input
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="you@example.com"
+          variant="bordered"
+          isRequired
+        />
 
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="At least 6 characters"
-          />
-        </div>
+        <Input
+          name="password"
+          type="password"
+          label="Password"
+          placeholder="At least 6 characters"
+          variant="bordered"
+          isRequired
+          minLength={6}
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+          color="primary"
+          isLoading={loading}
+          fullWidth
         >
           {loading ? "Creating account..." : "Create account"}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-foreground/60">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Input, Button } from "@heroui/react";
 import { createGroup } from "@/lib/actions/groups";
 
 export default function NewGroupPage() {
@@ -28,43 +29,31 @@ export default function NewGroupPage() {
           </div>
         )}
 
-        <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium">
-            Group name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="e.g. Apartment, Trip to Italy"
-          />
-        </div>
+        <Input
+          name="name"
+          type="text"
+          label="Group name"
+          placeholder="e.g. Apartment, Trip to Italy"
+          variant="bordered"
+          isRequired
+        />
 
-        <div>
-          <label
-            htmlFor="description"
-            className="mb-1 block text-sm font-medium"
-          >
-            Description (optional)
-          </label>
-          <input
-            id="description"
-            name="description"
-            type="text"
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="What's this group for?"
-          />
-        </div>
+        <Input
+          name="description"
+          type="text"
+          label="Description (optional)"
+          placeholder="What's this group for?"
+          variant="bordered"
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+          color="primary"
+          isLoading={loading}
+          fullWidth
         >
           {loading ? "Creating..." : "Create Group"}
-        </button>
+        </Button>
       </form>
     </div>
   );

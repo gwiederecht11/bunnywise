@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Input, Button } from "@heroui/react";
 import { addMember } from "@/lib/actions/groups";
 
 export function AddMemberForm({ groupId }: { groupId: string }) {
@@ -36,21 +37,21 @@ export function AddMemberForm({ groupId }: { groupId: string }) {
         <p className="mb-2 text-sm text-green-600">Member added</p>
       )}
       <form id="add-member-form" action={handleSubmit} className="flex gap-2">
-        <input
+        <Input
           name="email"
           type="email"
-          required
           placeholder="Enter email address"
-          aria-label="Member email address"
-          className="flex-1 rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
+          variant="bordered"
+          isRequired
+          className="flex-1"
         />
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+          color="primary"
+          isLoading={loading}
         >
           {loading ? "Adding..." : "Add"}
-        </button>
+        </Button>
       </form>
     </div>
   );

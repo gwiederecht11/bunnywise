@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@heroui/react";
 import { DeleteExpenseButton } from "@/components/expenses/delete-expense-button";
 
 export type ExpenseItem = {
@@ -31,12 +32,13 @@ export function ExpenseList({
       {allSettled && expenses.length > 0 && (
         <div className="mb-6 rounded-lg border border-dashed border-foreground/20 p-8 text-center">
           <p className="mb-3 text-foreground/60">You are all settled up</p>
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className="text-sm font-medium text-foreground/60 transition hover:text-foreground"
+          <Button
+            variant="light"
+            size="sm"
+            onPress={() => setShowHistory(!showHistory)}
           >
             {showHistory ? "Hide expense history" : "Show expense history"}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -55,17 +57,20 @@ export function ExpenseList({
               ? "You paid"
               : `${expense.payerName} paid`;
 
+            const isSettlement = expense.description === "Settlement";
             let oweLabel: string;
             let oweAmount: string | null;
             let oweColor: string;
             if (expense.isPayer) {
-              oweLabel = "You get back";
-              oweAmount = `$${(expense.amount - (expense.userShare ?? 0)).toFixed(2)}`;
-              oweColor = "text-green-600";
+              oweLabel = isSettlement ? "You settled" : "You get back";
+              oweAmount = isSettlement
+                ? `$${expense.amount.toFixed(2)}`
+                : `$${(expense.amount - (expense.userShare ?? 0)).toFixed(2)}`;
+              oweColor = isSettlement ? "text-foreground/60" : "text-green-600";
             } else if (expense.userShare) {
-              oweLabel = "You owe";
+              oweLabel = isSettlement ? "You received" : "You owe";
               oweAmount = `$${expense.userShare.toFixed(2)}`;
-              oweColor = "text-red-600";
+              oweColor = isSettlement ? "text-green-600" : "text-red-600";
             } else {
               oweLabel = "Not involved";
               oweAmount = null;
@@ -106,15 +111,17 @@ export function ExpenseList({
                   </div>
                 </div>
 
-                {/* Edit/Delete — fixed-width columns so buttons align across rows */}
+                {/* Edit/Delete */}
                 <div className="shrink-0 flex items-center">
                   <div className="w-10 text-center">
-                    <Link
+                    <Button
+                      as={Link}
                       href={`/groups/${groupId}/expenses/${expense.id}/edit`}
-                      className="text-sm text-foreground/60 transition hover:text-foreground"
+                      variant="light"
+                      size="sm"
                     >
                       Edit
-                    </Link>
+                    </Button>
                   </div>
                   <div className="w-14 text-center">
                     <DeleteExpenseButton

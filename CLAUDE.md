@@ -7,6 +7,8 @@ Bunnywise is a Splitwise-like expense splitting app for tracking shared expenses
 - **Next.js 14+** (App Router) with **TypeScript** (strict mode)
 - **Supabase** (PostgreSQL, Auth, Row Level Security)
 - **Tailwind CSS** for styling
+- **HeroUI** (`@heroui/react`) for UI components (Button, Input, Select, Card, Modal, Tabs, Navbar, Skeleton, Checkbox)
+- **Framer Motion** (HeroUI peer dependency)
 - **@supabase/supabase-js** + **@supabase/ssr** for Supabase integration
 - **Vercel** for deployment
 
@@ -26,7 +28,7 @@ app/
         settings/
   api/auth/callback/ # OAuth callback route
 components/
-  ui/                # Shared UI primitives (button, card, input, etc.)
+  ui/                # Shared UI primitives + HeroUI re-exports (heroui.tsx)
   auth/              # Auth-related components
   groups/            # Group-related components
   expenses/          # Expense form and list components
@@ -49,6 +51,7 @@ middleware.ts        # Auth route protection
 - **Supabase clients**: use `createBrowserClient` in client components, `createServerClient` (with cookie handling) in server components/actions/middleware.
 - **Profile creation**: Supabase DB trigger auto-creates a profile row on `auth.users` insert.
 - **Equal splits only**: expenses are split equally among selected group members.
+- **HeroUI components**: imported from `@heroui/react` in client components, or from `@/components/ui/heroui` (a `"use client"` re-export barrel) in server components. The re-export is needed because HeroUI components use React context internally.
 
 ## Database
 - 5 tables: `profiles`, `groups`, `group_members`, `expenses`, `expense_splits`

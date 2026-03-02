@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Input, Button } from "@heroui/react";
 import { signIn } from "@/lib/actions/auth";
 
 export default function LoginPage() {
@@ -32,42 +33,33 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="you@example.com"
-          />
-        </div>
+        <Input
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="you@example.com"
+          variant="bordered"
+          isRequired
+        />
 
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
-            placeholder="Your password"
-          />
-        </div>
+        <Input
+          name="password"
+          type="password"
+          label="Password"
+          placeholder="Your password"
+          variant="bordered"
+          isRequired
+          minLength={6}
+        />
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+          color="primary"
+          isLoading={loading}
+          fullWidth
         >
           {loading ? "Signing in..." : "Sign in"}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-foreground/60">

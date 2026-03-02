@@ -21,7 +21,7 @@ export default async function EditExpensePage({
   // Fetch the expense
   const { data: expense } = await supabase
     .from("expenses")
-    .select("id, description, amount, paid_by")
+    .select("id, description, amount, paid_by, expense_date")
     .eq("id", expenseId)
     .eq("group_id", groupId)
     .single();
@@ -59,6 +59,7 @@ export default async function EditExpensePage({
     description: expense.description,
     amount: Number(expense.amount),
     paidBy: expense.paid_by,
+    expenseDate: expense.expense_date,
     splits:
       splits?.map((s) => ({
         userId: s.user_id,

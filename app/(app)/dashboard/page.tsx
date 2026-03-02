@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { Button, Card, CardBody } from "@/components/ui/heroui";
 import {
   computeNetBalances,
   getUserSummary,
+  simplifyDebts,
 } from "@/lib/utils/calculations";
 import type { GroupMemberWithGroup } from "@/lib/types/database";
 
@@ -28,6 +30,7 @@ export default async function DashboardPage() {
   let totalOwed = 0;
   let totalOwe = 0;
   const groupBalances = new Map<string, number>();
+  const settledGroups = new Set<string>();
 
   if (groups.length > 0) {
     const groupIds = groups.map((g) => g.id);
@@ -80,6 +83,10 @@ export default async function DashboardPage() {
       totalOwe += summary.owes;
       const net = summary.owed - summary.owes;
       groupBalances.set(g.id, net);
+      const settlements = simplifyDebts(balances);
+      if (settlements.length === 0 && gExpenses.length > 0) {
+        settledGroups.add(g.id);
+      }
     }
   }
 
@@ -89,81 +96,92 @@ export default async function DashboardPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <Link
-          href="/groups/new"
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-90"
-        >
-          New Group
+        <Link href="/groups/new">
+          <Button color="primary">
+            New Group
+          </Button>
         </Link>
       </div>
 
       {/* Balance summary */}
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-foreground/10 p-4">
-          <p className="text-sm text-foreground/60">You are owed</p>
-          <p className="text-2xl font-bold text-green-600" aria-label={`You are owed $${totalOwed.toFixed(2)}`}>
-            ${totalOwed.toFixed(2)}
-          </p>
-        </div>
-        <div className="rounded-lg border border-foreground/10 p-4">
-          <p className="text-sm text-foreground/60">You owe</p>
-          <p className="text-2xl font-bold text-red-600" aria-label={`You owe $${totalOwe.toFixed(2)}`}>
-            ${totalOwe.toFixed(2)}
-          </p>
-        </div>
-        <div className="rounded-lg border border-foreground/10 p-4">
-          <p className="text-sm text-foreground/60">Net balance</p>
-          <p
-            className={`text-2xl font-bold ${netBalance >= 0 ? "text-green-600" : "text-red-600"}`}
-            aria-label={`Net balance ${netBalance >= 0 ? "positive" : "negative"} $${Math.abs(netBalance).toFixed(2)}`}
-          >
-            {netBalance >= 0 ? "+" : "-"}${Math.abs(netBalance).toFixed(2)}
-          </p>
-        </div>
+        <Card>
+          <CardBody>
+            <p className="text-sm text-foreground/60">You are owed</p>
+            <p className="text-2xl font-bold text-green-600">
+              ${totalOwed.toFixed(2)}
+            </p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-sm text-foreground/60">You owe</p>
+            <p className="text-2xl font-bold text-red-600">
+              ${totalOwe.toFixed(2)}
+            </p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-sm text-foreground/60">Net balance</p>
+            <p
+              className={`text-2xl font-bold ${netBalance >= 0 ? "text-green-600" : "text-red-600"}`}
+            >
+              {netBalance >= 0 ? "+" : "-"}${Math.abs(netBalance).toFixed(2)}
+            </p>
+          </CardBody>
+        </Card>
       </div>
 
       {/* Groups list */}
       <h2 className="mb-4 text-lg font-semibold">Your Groups</h2>
       {groups.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-foreground/20 p-8 text-center">
-          <p className="mb-2 text-foreground/60">
-            You&apos;re not in any groups yet.
-          </p>
-          <Link
-            href="/groups/new"
-            className="text-sm font-medium underline"
-          >
-            Create your first group
-          </Link>
-        </div>
+        <Card className="border border-dashed border-foreground/20">
+          <CardBody className="text-center py-8">
+            <p className="mb-2 text-foreground/60">
+              You&apos;re not in any groups yet.
+            </p>
+            <Link
+              href="/groups/new"
+              className="text-sm font-medium underline"
+            >
+              Create your first group
+            </Link>
+          </CardBody>
+        </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {groups.map((group) => {
             const bal = groupBalances.get(group.id) ?? 0;
+            const isSettled = settledGroups.has(group.id);
             return (
-              <Link
-                key={group.id}
-                href={`/groups/${group.id}`}
-                className="block rounded-lg border border-foreground/10 p-4 transition hover:border-foreground/30"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-semibold">{group.name}</h3>
-                    {group.description && (
-                      <p className="mt-1 text-sm text-foreground/60">
-                        {group.description}
+              <Link key={group.id} href={`/groups/${group.id}`} className="h-full">
+                <Card isPressable fullWidth className="h-full border border-foreground/10">
+                  <CardBody className="flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-semibold">{group.name}</h3>
+                      {group.description && (
+                        <p className="mt-1 text-sm text-foreground/60">
+                          {group.description}
+                        </p>
+                      )}
+                    </div>
+                    {isSettled ? (
+                      <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-green-600">
+                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        Settled up
                       </p>
-                    )}
-                  </div>
-                  {Math.abs(bal) > 0.005 && (
-                    <span
-                      className={`text-sm font-semibold ${bal > 0 ? "text-green-600" : "text-red-600"}`}
-                      aria-label={`${bal > 0 ? "You are owed" : "You owe"} $${Math.abs(bal).toFixed(2)}`}
-                    >
-                      {bal > 0 ? "+" : "-"}${Math.abs(bal).toFixed(2)}
-                    </span>
-                  )}
-                </div>
+                    ) : Math.abs(bal) > 0.005 ? (
+                      <p
+                        className={`mt-3 text-sm font-semibold ${bal > 0 ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {bal > 0 ? "+" : "-"}${Math.abs(bal).toFixed(2)}
+                      </p>
+                    ) : null}
+                  </CardBody>
+                </Card>
               </Link>
             );
           })}
