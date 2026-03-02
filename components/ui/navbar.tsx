@@ -31,7 +31,7 @@ export function Navbar({ email }: { email: string }) {
           <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold">
             Bunnywise
             <Image
-              src="/bunny-logo.png"
+              src="/bunny-logo.webp"
               alt="Bunnywise logo"
               width={28}
               height={28}

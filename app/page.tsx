@@ -9,7 +9,7 @@ export default function LandingPage() {
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-16">
         <div className="max-w-lg text-center">
           <Image
-            src="/bunny-logo.png"
+            src="/bunny-logo.webp"
             alt="Bunnywise logo"
             width={120}
             height={120}

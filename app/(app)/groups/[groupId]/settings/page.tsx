@@ -16,24 +16,22 @@ export default async function GroupSettingsPage({
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Fetch group to check if current user is creator
-  const { data: group } = await supabase
-    .from("groups")
-    .select("id, name, created_by")
-    .eq("id", groupId)
-    .single();
+  // All 3 queries are independent — run in parallel
+  const [{ data: { user } }, { data: group }, { data: members }] =
+    await Promise.all([
+      supabase.auth.getUser(),
+      supabase
+        .from("groups")
+        .select("id, name, created_by")
+        .eq("id", groupId)
+        .single(),
+      supabase
+        .from("group_members")
+        .select("user_id, joined_at, profiles(id, email, full_name)")
+        .eq("group_id", groupId),
+    ]);
 
   const isCreator = group?.created_by === user!.id;
-
-  // Fetch members with profile info
-  const { data: members } = await supabase
-    .from("group_members")
-    .select("user_id, joined_at, profiles(id, email, full_name)")
-    .eq("group_id", groupId);
 
   return (
     <div className="space-y-8">

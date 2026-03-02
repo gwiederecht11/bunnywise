@@ -14,17 +14,16 @@ export default async function EditExpensePage({
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Fetch the expense
-  const { data: expense } = await supabase
-    .from("expenses")
-    .select("id, description, amount, paid_by, expense_date")
-    .eq("id", expenseId)
-    .eq("group_id", groupId)
-    .single();
+  // Batch 1: getUser and expense are independent
+  const [{ data: { user } }, { data: expense }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("expenses")
+      .select("id, description, amount, paid_by, expense_date")
+      .eq("id", expenseId)
+      .eq("group_id", groupId)
+      .single(),
+  ]);
 
   if (!expense) {
     notFound();
@@ -35,17 +34,17 @@ export default async function EditExpensePage({
     notFound();
   }
 
-  // Fetch existing splits
-  const { data: splits } = await supabase
-    .from("expense_splits")
-    .select("user_id, share_amount")
-    .eq("expense_id", expenseId);
-
-  // Fetch group members with profile info
-  const { data: memberships } = await supabase
-    .from("group_members")
-    .select("user_id, profiles(id, email, full_name)")
-    .eq("group_id", groupId);
+  // Batch 2: splits and members are independent
+  const [{ data: splits }, { data: memberships }] = await Promise.all([
+    supabase
+      .from("expense_splits")
+      .select("user_id, share_amount")
+      .eq("expense_id", expenseId),
+    supabase
+      .from("group_members")
+      .select("user_id, profiles(id, email, full_name)")
+      .eq("group_id", groupId),
+  ]);
 
   const members =
     (memberships as GroupMemberWithProfile[] | null)?.map((m) => ({
