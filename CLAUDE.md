@@ -69,8 +69,14 @@ middleware.ts        # Auth route protection
 Required in `.env.local` (never commit this file):
 ```
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
+
+Add both local and production callback URLs to the Supabase Auth redirect URL
+allowlist, including `/api/auth/callback?next=/update-password` for password
+recovery. The Supabase recovery email template must link to
+`{{ .ConfirmationURL }}` so the configured callback and recovery code are used.
 
 ## Commands
 ```bash

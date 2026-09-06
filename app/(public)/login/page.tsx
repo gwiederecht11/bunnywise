@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Input, Button } from "@heroui/react";
 import { signIn } from "@/lib/actions/auth";
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const passwordUpdated = searchParams.get("passwordUpdated") === "true";
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -27,6 +30,12 @@ export default function LoginPage() {
       </p>
 
       <form action={handleSubmit} className="space-y-4">
+        {passwordUpdated && (
+          <div className="rounded-md bg-green-50 p-3 text-sm text-green-700">
+            Your password was updated. Sign in with your new password.
+          </div>
+        )}
+
         {error && (
           <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
             {error}
@@ -52,6 +61,15 @@ export default function LoginPage() {
           minLength={6}
         />
 
+        <div className="text-right">
+          <Link
+            href="/forgot-password"
+            className="text-sm font-medium text-foreground underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         <Button
           type="submit"
           color="primary"
@@ -69,5 +87,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
